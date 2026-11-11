@@ -1,0 +1,151 @@
+{
+  "project_name": "LexDocket - Shared Law Firm Color-Coded Deadline & Task Manager",
+  "app_type": "dashboard / saas_app",
+  "design_archetype": "Swiss & Tactical Precision / Law Firm Executive Desk",
+  "theme": "Dark / Light Toggle (Default: High-contrast Dark Slate for maximum clarity and eye safety during late docket reviews)",
+  "typography": {
+    "font_family_heading": "Plus Jakarta Sans, SF Pro Display, system-ui, sans-serif",
+    "font_family_body": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+    "font_family_mono": "JetBrains Mono, Roboto Mono, monospace",
+    "hierarchy": {
+      "h1_title": "text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100",
+      "h2_section": "text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100",
+      "h3_card": "text-base font-semibold text-slate-900 dark:text-slate-100",
+      "table_header": "text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400",
+      "table_cell": "text-sm text-slate-800 dark:text-slate-200",
+      "badge_text": "text-xs font-medium"
+    }
+  },
+  "colors": {
+    "background_dark": "#0B0F17",
+    "card_dark": "#111827",
+    "card_border_dark": "#1E293B",
+    "background_light": "#F8FAFC",
+    "card_light": "#FFFFFF",
+    "card_border_light": "#E2E8F0",
+    "primary": "#2563EB",
+    "primary_hover": "#1D4ED8",
+    "urgency_levels": {
+      "green": {
+        "name": "OK / On Track",
+        "bg_dark": "rgba(16, 185, 129, 0.12)",
+        "border_dark": "rgba(16, 185, 129, 0.35)",
+        "text_dark": "#34D399",
+        "bg_light": "#ECFDF5",
+        "border_light": "#A7F3D0",
+        "text_light": "#047857",
+        "row_highlight_dark": "hover:bg-emerald-950/20",
+        "left_border": "border-l-4 border-l-emerald-500"
+      },
+      "blue": {
+        "name": "Not Urgent / Routine",
+        "bg_dark": "rgba(59, 130, 246, 0.12)",
+        "border_dark": "rgba(59, 130, 246, 0.35)",
+        "text_dark": "#60A5FA",
+        "bg_light": "#EFF6FF",
+        "border_light": "#BFDBFE",
+        "text_light": "#1D4ED8",
+        "row_highlight_dark": "hover:bg-blue-950/20",
+        "left_border": "border-l-4 border-l-blue-500"
+      },
+      "yellow": {
+        "name": "Near Term / Important",
+        "bg_dark": "rgba(245, 158, 11, 0.12)",
+        "border_dark": "rgba(245, 158, 11, 0.35)",
+        "text_dark": "#FBBF24",
+        "bg_light": "#FFFBEB",
+        "border_light": "#FDE68A",
+        "text_light": "#B45309",
+        "row_highlight_dark": "hover:bg-amber-950/20",
+        "left_border": "border-l-4 border-l-amber-500"
+      },
+      "red": {
+        "name": "Urgent / Non-Extendable",
+        "bg_dark": "rgba(239, 68, 68, 0.16)",
+        "border_dark": "rgba(239, 68, 68, 0.45)",
+        "text_dark": "#F87171",
+        "bg_light": "#FEF2F2",
+        "border_light": "#FECACA",
+        "text_light": "#B91C1C",
+        "row_highlight_dark": "hover:bg-rose-950/25",
+        "left_border": "border-l-4 border-l-rose-600"
+      }
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-md bg-slate-900/80 dark:bg-slate-900/90 border border-slate-800/80",
+    "table_hover_row": "transition-colors duration-150 cursor-pointer",
+    "auto_refresh_badge": "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+  },
+  "layout_and_grid": {
+    "header_bar": "w-full border-b border-slate-800 bg-slate-900/90 backdrop-blur px-6 py-4 flex items-center justify-between sticky top-0 z-40",
+    "metrics_grid": "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-6 pt-6 pb-2",
+    "filter_bar": "px-6 py-4 bg-slate-900/40 border-y border-slate-800/60 flex flex-wrap items-center justify-between gap-4",
+    "main_container": "max-w-[1700px] mx-auto px-4 sm:px-6 py-6 space-y-6",
+    "table_container": "rounded-xl border border-slate-800 bg-slate-900/70 overflow-hidden shadow-xl shadow-black/40"
+  },
+  "component_guidelines": {
+    "file_extensions": "Use .js and .jsx files as established in frontend/src",
+    "shadcn_components": "Utilize existing Shadcn primitives in src/components/ui/ (table.jsx, dialog.jsx, context-menu.jsx, dropdown-menu.jsx, select.jsx, badge.jsx, sonner.jsx, tooltip.jsx)",
+    "table_features": {
+      "sortable_columns": ["Task", "Assignee", "Matter No", "Deadline", "Urgency", "Updated"],
+      "relative_deadline": "Display both exact date (e.g. Oct 24, 2026) and relative calculation badge (e.g. 'In 3 days', 'Due Today', 'OVERDUE by 2 days'). Highlight overdue items in bold red pulse.",
+      "hyperlink_cell": "If URL is provided, render clickable anchor tag with external link icon; truncate cleanly with hover tooltip for full URL.",
+      "updated_by": "Display updated timestamp formatted nicely (e.g. 'Oct 20, 14:32') along with author name taken from logged-in account."
+    },
+    "right_click_context_menu": "Right-clicking any table row presents a context menu with options: 'Set Urgency' (Green, Blue, Yellow, Red color chips), 'Edit Task', 'Duplicate Task', 'Copy Matter No', and 'Delete Task'.",
+    "double_click_action": "Double-clicking any table row triggers the Edit Task dialog immediately.",
+    "polling": "Auto-refreshes task list from backend every 5 seconds. Shows a subtle pulsing status dot with manual 'Sync Now' button.",
+    "filters": {
+      "search_input": "Full text search matching task title, assignee, matter number, or notes.",
+      "matter_select": "Dropdown list of all unique matter numbers present + all matters option.",
+      "urgency_pills": "Filter pills for All, Green (OK), Blue (Not Urgent), Yellow (Near Term), Red (Urgent).",
+      "clear_button": "Resets all filters instantly."
+    },
+    "backup_and_restore": "Download backup produces a structured .json file containing all tasks & settings. Restore feature accepts upload of valid JSON file with clear confirmation dialog."
+  },
+  "image_urls": {
+    "avatars": [
+      {
+        "url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "User profile avatar female attorney"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "description": "User profile avatar male senior partner"
+      }
+    ]
+  },
+  "accessibility_and_testing": {
+    "wcag_contrast": "Ensure color-coded rows maintain text contrast ratio of at least 4.5:1 against background colors.",
+    "keyboard_navigation": "Context menu accessible via keyboard shortcuts or action button per row.",
+    "test_ids": {
+      "login_email": "login-email-input",
+      "login_password": "login-password-input",
+      "login_submit": "login-submit-button",
+      "task_search_input": "task-search-input",
+      "matter_filter_select": "matter-filter-select",
+      "urgency_filter_pill": "urgency-filter-pill-[color]",
+      "clear_filters_button": "clear-filters-button",
+      "new_task_button": "new-task-button",
+      "task_table": "deadline-task-table",
+      "task_row": "task-row-[id]",
+      "task_row_context_menu": "task-row-context-menu-[id]",
+      "set_urgency_option": "context-set-urgency-[color]",
+      "auto_refresh_status": "auto-refresh-status-indicator",
+      "backup_download_btn": "backup-download-button",
+      "backup_restore_btn": "backup-restore-button",
+      "help_dialog_btn": "help-dialog-button",
+      "admin_manage_btn": "admin-manage-button"
+    }
+  },
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic outputs. In frontend design, avoid AI slop and build a polished law-firm style docket command center.",
+    "Dark colors look good when used independently without generic noisy gradients.",
+    "DO NOT apply universal transition (e.g. transition: all). Apply specific transitions on hover and background color changes.",
+    "NEVER center-align the app container body. Keep left-aligned natural legal desk table layout.",
+    "NEVER use AI assistant emoji characters like 🤖🧠💭. Use Lucide SVG icons (e.g., AlertTriangle, Clock, Calendar, Scale, Link, Filter, Search, User, Shield).",
+    "Ensure every interaction (hover, context menu, modal popup, filter toggle) has subtle micro-animations.",
+    "Include data-testid on all key interactive elements as specified in test_ids."
+  ]
+}
