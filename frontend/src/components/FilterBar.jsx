@@ -22,11 +22,11 @@ export const FilterBar = ({ filters, setFilters, shown, total }) => {
   const field = "bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500";
   return (
     <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-3 flex flex-wrap items-center gap-3">
-      <div className="relative">
+      <div className="relative w-full sm:w-64">
         <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500" />
-        <Input value={filters.search} onChange={set("search")} placeholder="Search task, assignee, notes…" className={`${field} pl-8 w-64`} data-testid="task-search-input" />
+        <Input value={filters.search} onChange={set("search")} placeholder="Search task, assignee, notes…" className={`${field} pl-8 w-full`} data-testid="task-search-input" />
       </div>
-      <Input value={filters.matter} onChange={set("matter")} placeholder="Matter No filter" className={`${field} w-44 font-mono`} data-testid="matter-filter-input" />
+      <Input value={filters.matter} onChange={set("matter")} placeholder="Matter No filter" className={`${field} w-full sm:w-44 font-mono`} data-testid="matter-filter-input" />
       <div className="flex flex-wrap items-center gap-1.5">
         <Pill value="all" label="All" active={filters.urgency === "all"} onClick={() => setFilters((f) => ({ ...f, urgency: "all" }))} />
         {COLOR_ORDER.map((c) => (

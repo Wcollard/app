@@ -257,8 +257,7 @@ async def origin_guard(request: Request, call_next):
 @api.post("/auth/login")
 async def login(body: LoginInput, request: Request, response: Response):
     email = body.email.lower()
-    ip = request.client.host if request.client else "unknown"
-    identifier = f"{ip}:{email}"
+    identifier = email
     attempt = await db.login_attempts.find_one({"identifier": identifier})
     if attempt and attempt.get("count", 0) >= 5:
         locked_at = datetime.fromisoformat(attempt["last"])
@@ -402,9 +401,10 @@ async def restore(body: RestoreInput, admin: User = Depends(require_admin)):
         item["updated_at"] = str(raw.get("updated_at") or now_iso())
         item["updated_by"] = str(raw.get("updated_by") or admin.name)
         cleaned.append(Task(**item).to_mongo())
-    await db.todos.delete_many({})
+    new_ids = []
     if cleaned:
-        await db.todos.insert_many(cleaned)
+        new_ids = (await db.todos.insert_many(cleaned)).inserted_ids
+    await db.todos.delete_many({"_id": {"$nin": new_ids}})
     return {"restored": len(cleaned)}
 
 

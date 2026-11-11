@@ -1,0 +1,41 @@
+{
+  "summary": "Ran end-to-end tests of the Shared Deadline List. Backend: 17 pytest cases covering auth, cookies, CORS, origin guard, lockout, task CRUD and validation, color, backup, restore (including a validation case that must not wipe data, plus a round-trip), users, and member permissions. Frontend: Playwright tests for login (including the error case), redirect, logout, the create dialog (title/date/link errors, date picker, example.com normalization, urgency select), editing by double-click and by context menu, context menu urgency colors, duplicate, delete confirm, search (title/assignee/notes), Matter No filter, pills, stat cards, clear filters, sorting asc/desc, F5, the live indicator, backup download, restore via file plus confirm, Help, and the Team dialog (add, reset password with a prompt, delete with a confirm). A member cannot see Team or Restore, and updated_by shows the member's name. Everything passed except brute-force lockout.",
+  "backend_issues": {
+    "critical": [
+      {"endpoint": "POST /api/auth/login", "issue": "Brute-force lockout does not trigger after 5 failures (6 attempts all returned 401). RCA: identifier = f'{request.client.host}:{email}'. Behind the k8s ingress, client.host is the ingress pod IP, and that varies between replicas (we saw 10.211.0.134 and 10.211.0.22). Failed attempts are split across several counters, so the real limit is about 5 x the number of ingress replicas, and the attempt counts are unpredictable. Fix: use the first IP in the X-Forwarded-For header (fall back to client.host), or key the lockout on email only.", "priority": "HIGH"}
+    ],
+    "minor": [
+      {"endpoint": "POST /api/restore", "issue": "delete_many followed by insert_many is not atomic. If the insert fails, every task is lost. Restore also gives every task a new ObjectId, so a client holding a stale id (an open edit dialog) gets 404 errors."},
+      {"endpoint": "general", "issue": "@app.on_event is deprecated; use a lifespan handler. CORS_ORIGINS='*' in .env is unused, which is fine because FRONTEND_URL is used."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Dashboard (desktop 1920)", "issues": ["<main> has max-w-[1700px] but no mx-auto. The content is left-aligned with about 220px of empty space on the right, while the header spans the full width, so the header buttons do not line up with the content edge."]},
+      {"screen": "Dashboard (mobile 390)", "issues": ["Search and Matter No inputs have fixed widths and do not fill the filter card, so the placeholders are cut off ('Search task, assignee, notes', 'Matter No filte').", "The hint 'Right-click a row... Double-click to edit' does not apply on touch devices, and there is no long-press alternative for the context menu."]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_deadline_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Fix the brute-force identifier: use the X-Forwarded-For client IP (first entry) instead of request.client.host, or key on email only. Then confirm that the 6th bad attempt returns 429.",
+    "Add mx-auto to the main container in DashboardPage, or remove max-w, so the layout is centered or aligned on wide screens.",
+    "Make the search and matter inputs full width on mobile.",
+    "Optional: make restore safer (insert into a temp collection and then swap, or use a transaction)."
+  ],
+  "critical_code_review_comments": [
+    "server.py login(): request.client.host is the ingress IP, not the client IP. This breaks per-IP lockout and makes every user share the same IP bucket.",
+    "restore(): not atomic; a failure between delete_many and insert_many leaves the list empty.",
+    "TaskDialog relies on the backend for date validation. That works, but entering a date like 2026/01/01 gives no inline client-side hint until Save is pressed.",
+    "Positives: bcrypt $2b$ hashes; httpOnly, Secure, SameSite=None cookies; explicit CORS origin with credentials; seed_admin is idempotent and only inserts when the admin is missing; password_hash and _id are never returned; javascript: and data: URLs are rejected server-side and safeHref is applied on the client."
+  ],
+  "updated_files": ["/app/backend/tests/test_deadline_api.py"],
+  "success_rate": {"backend": "94% (16/17)", "frontend": "100%"},
+  "test_credentials": "Admin wcollard@yahoo.com / Deadlines2026! from /app/memory/test_credentials.md worked.",
+  "seed_data_creation": "None left behind. All TEST_ tasks, TEST_ users and test_bf login_attempts were removed. Note: the restore round-trip tests re-created the pre-existing TEST_x task with a new ObjectId (now 6af4bf59e663f3d05e60b40a); its contents are unchanged.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Run: cd /app/backend && REACT_APP_BACKEND_URL=<url> python -m pytest tests/test_deadline_api.py. pytest.ini uses xdist. test_brute_force_lockout uses a random throwaway email and is expected to pass once the X-Forwarded-For fix is in. The restore tests do a backup and then a restore of the same data, which changes task ObjectIds. In UsersDialog, reset password uses window.prompt and delete uses window.confirm; handle both with page.on('dialog').",
+  "rca of the issue": "Lockout: Mongo login_attempts showed two documents for the same email with different IP prefixes (10.211.0.134 and 10.211.0.22), each with count 3, after 6 failures. The cause is ingress load-balancing across pods. Mitigation: derive the IP from the X-Forwarded-For header."
+}

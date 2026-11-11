@@ -96,7 +96,7 @@ export default function DashboardPage() {
   return (
     <div className="grain min-h-screen">
       <AppHeader online={online} lastSync={lastSync} onRefresh={refresh} />
-      <main className="relative z-10 max-w-[1700px] px-4 sm:px-6 py-6 space-y-6">
+      <main className="relative z-10 max-w-[1700px] mx-auto px-4 sm:px-6 py-6 space-y-6">
         <div className="flex flex-wrap items-end justify-between gap-4 rise">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-50">Deadlines</h1>
